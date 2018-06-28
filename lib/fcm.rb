@@ -146,6 +146,21 @@ class FCM
     end
   end
 
+  def send_to_topic_condition(condition, options = {})
+    body = { condition: condition }.merge(options)
+
+    params = {
+        body: body.to_json,
+        headers: {
+            'Authorization' => "key=#{@api_key}",
+            'Content-Type' => 'application/json'
+        }
+    }
+
+    response = self.class.post('/send', params.merge(@client_options))
+    build_response(response)
+  end
+
   def add_to_topic(topic, registration_ids)
     post_body = build_server_post_body(registration_ids, {to: topic})
 
