@@ -4,7 +4,7 @@ require 'json'
 
 class FCM
   include HTTParty
-  base_uri 'https://fcm.googleapis.com/fcm'
+  base_uri 'https://fcm.googleapis.com/fcm/send'
   default_timeout 30
   format :json
 
