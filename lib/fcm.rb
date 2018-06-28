@@ -251,7 +251,7 @@ class FCM
   def build_canonical_ids(body, registration_ids)
     canonical_ids = []
     unless body.empty?
-      if body['canonical_ids'] > 0
+      if body['canonical_ids'].present? && body['canonical_ids'] > 0
         body['results'].each_with_index do |result, index|
           canonical_ids << { old: registration_ids[index], new: result['registration_id'] } if has_canonical_id?(result)
         end
@@ -263,7 +263,7 @@ class FCM
   def build_not_registered_ids(body, registration_id)
     not_registered_ids = []
     unless body.empty?
-      if body['failure'] > 0
+      if body['failure'].present? && body['failure'] > 0
         body['results'].each_with_index do |result, index|
           not_registered_ids << registration_id[index] if is_not_registered?(result)
         end
