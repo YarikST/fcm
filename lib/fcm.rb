@@ -4,7 +4,6 @@ require 'json'
 
 class FCM
   include HTTParty
-  base_uri 'https://fcm.googleapis.com/fcm/send'
   default_timeout 30
   format :json
 
@@ -12,11 +11,15 @@ class FCM
   GROUP_NOTIFICATION_BASE_URI = 'https://android.googleapis.com/gcm'
   SERVER_REFERENCE_BASE_URI   = 'https://iid.googleapis.com/iid'
 
-  attr_accessor :timeout, :api_key
+  attr_accessor :timeout, :api_key, :project_id
 
-  def initialize(api_key, client_options = {})
+  def initialize(api_key, project_id, client_options = {})
     @api_key = api_key
+    @project_id = project_id
     @client_options = client_options
+
+
+    self.class.send(:base_uri, "https://fcm.googleapis.com/v1/#{project_id}/messages:send")
   end
 
   # {
@@ -59,11 +62,7 @@ class FCM
       }
     }
 
-    response = nil
-
-    for_uri(GROUP_NOTIFICATION_BASE_URI) do
-      response = self.class.post('/notification', params.merge(@client_options))
-    end
+    response = self.class.post('/notification', params.merge(@client_options))
 
     build_response(response)
   end
@@ -83,11 +82,8 @@ class FCM
       }
     }
 
-    response = nil
+    response = self.class.post('/notification', params.merge(@client_options))
 
-    for_uri(GROUP_NOTIFICATION_BASE_URI) do
-      response = self.class.post('/notification', params.merge(@client_options))
-    end
     build_response(response)
   end
   alias add add_registration_ids
@@ -106,11 +102,8 @@ class FCM
       }
     }
 
-    response = nil
+    response = self.class.post('/notification', params.merge(@client_options))
 
-    for_uri(GROUP_NOTIFICATION_BASE_URI) do
-      response = self.class.post('/notification', params.merge(@client_options))
-    end
     build_response(response)
   end
   alias remove remove_registration_ids
@@ -127,11 +120,8 @@ class FCM
       }
     }
 
-    response = nil
+    response = self.class.get('/notification', params.merge(@client_options))
 
-    for_uri(GROUP_NOTIFICATION_BASE_URI) do
-      response = self.class.get('/notification', params.merge(@client_options))
-    end
     build_response(response)
   end
 
