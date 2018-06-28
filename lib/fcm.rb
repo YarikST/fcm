@@ -165,41 +165,45 @@ class FCM
   end
 
   def add_to_topic(topic, registration_ids)
-    post_body = build_server_post_body(registration_ids, {to: topic})
+    if topic.gsub(TOPIC_REGEX, "").length == 0
+      post_body = build_server_post_body(registration_ids, {to: '/topics/' + topic})
 
-    params = {
-        body: post_body.to_json,
-        headers: {
-            'Authorization' => "key=#{@api_key}",
-            'Content-Type' => 'application/json'
-        }
-    }
+      params = {
+          body: post_body.to_json,
+          headers: {
+              'Authorization' => "key=#{@api_key}",
+              'Content-Type' => 'application/json'
+          }
+      }
 
-    response = nil
+      response = nil
 
-    for_uri(SERVER_REFERENCE_BASE_URI) do
-      response = self.class.post('/v1:batchAdd', params.merge(@client_options))
+      for_uri(SERVER_REFERENCE_BASE_URI) do
+        response = self.class.post('/v1:batchAdd', params.merge(@client_options))
+      end
+      build_response(response, registration_ids)
     end
-    build_response(response, registration_ids)
   end
 
   def remove_to_topic(topic, registration_ids)
-    post_body = build_server_post_body(registration_ids, {to: topic})
+    if topic.gsub(TOPIC_REGEX, "").length == 0
+      post_body = build_server_post_body(registration_ids, {to: '/topics/' + topic})
 
-    params = {
-        body: post_body.to_json,
-        headers: {
-            'Authorization' => "key=#{@api_key}",
-            'Content-Type' => 'application/json'
-        }
-    }
+      params = {
+          body: post_body.to_json,
+          headers: {
+              'Authorization' => "key=#{@api_key}",
+              'Content-Type' => 'application/json'
+          }
+      }
 
-    response = nil
+      response = nil
 
-    for_uri(SERVER_REFERENCE_BASE_URI) do
-      response = self.class.post('/v1:batchRemove', params.merge(@client_options))
+      for_uri(SERVER_REFERENCE_BASE_URI) do
+        response = self.class.post('/v1:batchRemove', params.merge(@client_options))
+      end
+      build_response(response, registration_ids)
     end
-    build_response(response, registration_ids)
   end
 
   private
