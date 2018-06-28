@@ -85,6 +85,16 @@ response = fcm.remove(key_name: "appUser-Chris",
                 registration_ids:["8", "15"])
 ```
 
+### Add/Remove Registration Tokens in Topic
+
+You can also add/remove registration Tokens to/from a particular `topic`. For example:
+
+```ruby
+response = fcm.add_to_topic(topic: "movies", registration_ids:["7", "3"])
+
+response = fcm.remove_to_topic(topic: "movies", registration_ids:["7", "3"])
+```
+
 ## Send Messages to Topics
 
 FCM [topic messaging](https://firebase.google.com/docs/cloud-messaging/topic-messaging) allows your app server to send a message to multiple devices that have opted in to a particular topic. Based on the publish/subscribe model, topic messaging supports unlimited subscriptions per app. Sending to a topic is very similar to sending to an individual device or to a user group, in the sense that you can use the `fcm.send_with_notification_key()` method where the `notification_key` matches the regular expression `"/topics/[a-zA-Z0-9-_.~%]+"`:
