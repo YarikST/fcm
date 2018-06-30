@@ -16,14 +16,10 @@ class FCM
 
   attr_accessor :timeout
 
-  def initialize(api_key, project_id, credentials_path, client_options = {})
-    @api_key = api_key
-    @project_id = project_id
+  def initialize(client_options = {})
     @client_options = client_options
-    @credentials_path = credentials_path
 
-
-    self.class.send(:base_uri, "https://fcm.googleapis.com/v1/projects/#{project_id}/messages:send")
+    self.class.send(:base_uri, "https://fcm.googleapis.com/v1/projects/#{ENV['FIREBASE_PROJECT_ID']}/messages:send")
   end
 
   def send_notification(token, options = {})
@@ -113,7 +109,7 @@ class FCM
   end
 
   def auth
-    {"access_token"=> @api_key, "token_type"=> "key=", "expires_in"=> nil}
+    {"access_token"=> ENV['FIREBASE_WEB_API_KEY'], "token_type"=> "key=", "expires_in"=> nil}
   end
 
   def auth_2LO
@@ -121,9 +117,7 @@ class FCM
   end
 
   def refresh_auth_2LO
-    authorizer = Google::Auth::ServiceAccountCredentials.make_creds(
-        json_key_io: File.open(@credentials_path),
-        scope: SCOPE)
+    authorizer = Google::Auth::ServiceAccountCredentials.make_creds(scope: SCOPE)
 
     @access_token_info = authorizer.fetch_access_token!
   end
