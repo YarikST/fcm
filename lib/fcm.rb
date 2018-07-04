@@ -89,6 +89,7 @@ class FCM
   def response type, path, params, registration_ids=[]
     retry_count = 0
 
+
     loop do
       response = self.class.send(type, path, params)
 
@@ -98,6 +99,7 @@ class FCM
         return build_response(response, registration_ids)
       elsif response.code == 401
         refresh_auth_2LO
+        params.merge!( headers: headers(auth_2LO) )
       else
         raise Exception.new(response)
       end
