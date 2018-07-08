@@ -111,7 +111,7 @@ class FCM
   end
 
   def auth
-    {"access_token"=> ENV['FIREBASE_WEB_API_KEY'], "token_type"=> "key=", "expires_in"=> nil}
+    {"access_token"=> ENV['FIREBASE_SERVER_API_KEY'], "token_type"=> "key=", "expires_in"=> nil}
   end
 
   def auth_2LO
