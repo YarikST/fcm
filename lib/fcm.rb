@@ -34,10 +34,14 @@ class FCM
   end
 
   def send_to_topic(topic, condition, options = {})
-    if topic.gsub(TOPIC_REGEX, "").length == 0 && (condition.nil? || validate_condition?(condition))
-      body = {message: { topic: topic }.merge!(options)}
+    if (topic.nil? || topic.gsub(TOPIC_REGEX, "").length == 0) && (condition.nil? || validate_condition_topics?(condition))
+      body = {message: {}.merge!(options)}
 
-      body[:message][:condition] = condition if condition.present?
+      if condition.present?
+        body[:message][:condition] = condition
+      else
+        body[:message][:topic] = topic
+      end
 
       params = {
           body: body.to_json,
