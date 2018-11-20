@@ -10,6 +10,7 @@ class FCM
 
   # constants
   SERVER_REFERENCE_BASE_URI   = 'https://iid.googleapis.com/iid'
+  SERVER_BASE_URI   = 'https://fcm.googleapis.com/fcm'
   TOPIC_REGEX = /[a-zA-Z0-9\-_.~%]+/
   SCOPE = "https://www.googleapis.com/auth/firebase.messaging"
   MAX_COUTN_FAILED_REQUEST = 1
@@ -22,12 +23,29 @@ class FCM
     self.class.send(:base_uri, "https://fcm.googleapis.com/v1/projects/#{ENV['FIREBASE_PROJECT_ID']}/messages:send")
   end
 
+  def send_to_registration(registration_ids,  options = {})
+    post_body = { registration_ids: registration_ids }.merge(options)
+
+    params = {
+        body: post_body.to_json,
+        headers: headers(auth)
+    }
+
+    response = nil
+
+    for_uri(SERVER_BASE_URI) do
+      response = self.class.post('/send', params.merge(@client_options))
+    end
+
+    build_response(response, registration_ids)
+  end
+
   def send_notification(token, options = {})
     post_body = { message:{ token: token }.merge!(options) }
 
     params = {
-      body: post_body.to_json,
-      headers: headers(auth_2LO)
+        body: post_body.to_json,
+        headers: headers(auth_2LO)
     }
 
     response(:post, '', params.merge(@client_options))
