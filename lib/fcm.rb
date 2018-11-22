@@ -20,7 +20,7 @@ class FCM
   def initialize(client_options = {})
     @client_options = client_options
 
-    self.class.send(:base_uri, "https://fcm.googleapis.com/v1/projects/#{ENV['FIREBASE_PROJECT_ID']}/messages:send")
+    @base_uri = "https://fcm.googleapis.com/v1/projects/#{ENV['FIREBASE_PROJECT_ID']}/messages:send"
   end
 
   def send_to_registration(registration_ids,  options = {})
@@ -31,11 +31,7 @@ class FCM
         headers: headers(auth)
     }
 
-    response = nil
-
-    for_uri(SERVER_BASE_URI) do
-      response = self.class.post('/send', params.merge(@client_options))
-    end
+    response = self.class.post(SERVER_BASE_URI + '/send', params.merge(@client_options))
 
     build_response(response, registration_ids)
   end
@@ -48,7 +44,7 @@ class FCM
         headers: headers(auth_2LO)
     }
 
-    response(:post, '', params.merge(@client_options))
+    response(:post, @base_uri, params.merge(@client_options))
   end
 
   def send_to_topic(topic, condition, options = {})
@@ -66,7 +62,7 @@ class FCM
           headers: headers(auth_2LO)
       }
 
-      response(:post, '', params.merge(@client_options))
+      response(:post, @base_uri, params.merge(@client_options))
     end
   end
 
@@ -79,11 +75,8 @@ class FCM
           headers: headers(auth)
       }
 
-      response = nil
+      response = self.class.post(SERVER_REFERENCE_BASE_URI + '/v1:batchAdd', params.merge(@client_options))
 
-      for_uri(SERVER_REFERENCE_BASE_URI) do
-        response = self.class.post('/v1:batchAdd', params.merge(@client_options))
-      end
       build_response(response, registration_ids)
     end
   end
@@ -97,11 +90,8 @@ class FCM
           headers: headers(auth)
       }
 
-      response = nil
+      response = self.class.post(SERVER_REFERENCE_BASE_URI + '/v1:batchRemove', params.merge(@client_options))
 
-      for_uri(SERVER_REFERENCE_BASE_URI) do
-        response = self.class.post('/v1:batchRemove', params.merge(@client_options))
-      end
       build_response(response, registration_ids)
     end
   end
